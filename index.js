@@ -1,34 +1,19 @@
 import express from 'express'
-import mysql from 'mysql2';
-
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'waccount-book',
-  password: 'Leejaesu!2',
-});
-
-export const db = pool.promise();
-// 임시 query
-export async function getData() {
-  return db
-    .execute('INSERT INTO data (date, amount, summary, memo) VALUES(?,?,?,?)', [
-      new Date(),
-      100000,
-      'test3',
-      'testestestestestestestestes'
-    ]) //
-    .then((result) => result);
-}
+import dataRouter from './router/data.js';
 
 const app = express()
+app.use(express.json())
 
-app.get('/', (req, res) => {
-  console.log(req.query)
-  return res.json({
-    first: 1
-  })
-})
+app.use('/data', dataRouter);
+
+app.use((req, res, next) => {
+  res.sendStatus(404);
+});
+
+app.use((error, req, res, next) => {
+  console.error(error);
+  res.sendStatus(500);
+});
 
 app.listen(4508, async () => {
   console.log('aa')
