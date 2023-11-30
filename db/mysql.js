@@ -5,6 +5,7 @@ const pool = mysql.createPool({
   user: 'root',
   database: 'waccount-book',
   password: 'Leejaesu!2',
+  dateStrings: ['DATE']
 });
 
 export const db = pool.promise();
