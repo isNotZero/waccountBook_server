@@ -2,7 +2,7 @@ import { db } from '../db/mysql.js';
 
 export async function getData(id) {
   return db
-    .execute(`SELECT * FROM data ${id ? `WHERE id = ${id}` : ''}`) //
+    .execute(`SELECT * FROM data ${id ? `WHERE id = ${id}` : ''} ORDER BY date DESC, time DESC`) //
     .then((result) => result[0]);
 }
 
