@@ -7,9 +7,8 @@ export async function getData(req, res) {
 }
 
 export async function createData(req, res, next) {
-  const date = new Date()
-  const { amount, summary, memo } = req.body
-  const result = await dataRepository.create(date, amount, summary, memo);
+  const { date, time, amount, summary, memo } = req.body
+  const result = await dataRepository.create(date, time, amount, summary, memo);
   res.status(201).json(result);
 }
 
@@ -22,9 +21,9 @@ export async function updateData(req, res, next) {
   }
   const keys = Object.keys(body).map(key => `${key}=?`).join()
   const values = Object.values(body)
-  // if (tweet.userId !== req.userId) {
-  //   return res.sendStatus(403);
-  // }
+  // // if (tweet.userId !== req.userId) {
+  // //   return res.sendStatus(403);
+  // // }
   const updated = await dataRepository.update(id, keys, values);
   res.status(200).json(updated);
 }

@@ -6,10 +6,11 @@ export async function getData(id) {
     .then((result) => result[0]);
 }
 
-export async function create(date, amount, summary, memo) {
+export async function create(date, time, amount, summary, memo) {
   return db
-    .execute('INSERT INTO data (date, amount, summary, memo) VALUES(?,?,?,?)', [
+    .execute('INSERT INTO data (date, time, amount, summary, memo) VALUES(?,?,?,?,?)', [
       date,
+      time,
       amount,
       summary,
       memo,
