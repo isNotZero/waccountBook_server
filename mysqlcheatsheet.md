@@ -563,3 +563,127 @@ CREATE VIEW 뷰이름 AS SELECT 출력할컬럼명... FROM 테이블명
 > 3. table에 컬럼변경이 필요할때 view 를 만들어서 먼저 실행해 볼 수 있음
 > 4. view 안에서 SELECT 해서 view 만들수 있으나 너무 많은 중첩 금지
 > 실제로 테이블이 생성되는것은 아님
+
+## PROCEDURE
+### stored procedure
+```SQL
+DROP PROCEDURE IF EXISTS 데이터베이스명.프로시저명;
+
+DELIMITER $$
+$$
+CREATE PROCEDURE 데이터베이스명.프로시저명()
+BEGIN
+  query
+END
+$$
+DELIMITER ;
+```
+### parameter 사용
+```SQL
+CREATE PROCEDURE 데이터베이스명.프로시저명(파라미터명1 datatype, 파라미터명2 datatype)
+BEGIN
+  SELECT * FROM 테이블명 WHERE 컬럼명 > 파라미터명1
+END
+```
+```SQL
+CALL 프로시저명(arg, arg2)
+```
+### OUT parameter
+```SQL
+CREATE PROCEDURE 데이터베이스명.프로시저명(OUT 파라미터명1 INT)
+BEGIN
+  SET 파라미터명1 = 20;
+END
+```
+```SQL
+CALL 프로시저명(@변수명)
+SELECT @변수명; // 20
+```
+
+## 변수
+```SQL
+SET @변수명 = '값';
+SET @변수명 := '값';
+SELECT @변수명 := '값';
+```
+### PROCEDURE 에서 변수 생성
+```SQL
+CREATE PROCEDURE 데이터베이스명.프로시저명()
+BEGIN
+  DECLARE 변수1 datatype;
+  DECLARE 변수2 datatype;
+  DECLARE 변수3 datatype DEFAULT 기본값;
+END
+```
+### PROCEDURE 에서 변수값 변경
+```SQL
+CREATE PROCEDURE 데이터베이스명.프로시저명()
+BEGIN
+  DECLARE 변수1 INT;
+  SET 변수1 = 10;
+  SET 변수1 = 변수1 + 1;
+  SELECT 변수1;
+END
+```
+> DECLAER 변수 vs @변수 차이
+> @변수는 user variable이라고 부르는데, 한번 만들어놓으면 DBMS 종료때까지 남아 있음.  
+> 그리고 작성하는 SQL파일 모든 곳에서 전역으로 사용가능 함  
+> DECLARE 변수는 변수를 만든 procedure 내부에서만 사용가능
+> procedure 종료시 바로 사라짐
+
+## 날짜&시간
+### DATETIME 컬럼 가져오기
+```SQL
+SELECT * FROM 테이블명 WHERE 컬럼명 > '2023-03-10 08:08:08'
+SELECT * FROM 테이블명 WHERE 컬럼명 = '2023-03-10 08:08:08'
+```
+### 원하는 날짜의 모든 행 가져오기
+```SQL
+SELECT * FROM 테이블명 WHERE 컬럼명 >= '2023-03-10 00:00:00' AND WHERE 컬럼명 < '2023-03-11 00:00:00'
+```
+```SQL
+SELECT * FROM 테이블명 WHERE 컬럼명 BETWEEN '2023-03-10 00:00:00' AND '2023-03-11 00:00:00'
+```
+> 시간을 ms 단위까지 저장하기 때문에 BETWEEN을 사용하면 빵꾸날수 있음  
+> 부등호는 컬럼명 < '2023-03-10' 처럼 시간 사용하지 않아도 됨
+### 2022년 3월 10일부터 현재 시간까지 발행된 글 출력
+```SQL
+SELECT * FROM 테이블명 WHERE 컬럼명 > '2022-03-10 00:00:00' AND 컬럼명 <= now()
+```
+> now(6) 이면 현재 날짜/시간을 초단위 소수점 6자리까지 알려둠  
+> curdate() 시간없이 현재날짜만  
+> date() 는 DATETIME -> DATE로 형식 변경됨, index를 쓸수 없는 방법이라 느릴수 있음
+### 날짜 포맷 바꾸기
+```SQL
+SELECT date_format(now(), '%Y년 %d일이고 %m일입니다.')
+```
+### 새로운 행에 날짜 입력
+```SQL
+INSERT INTO 테이블명 VALUES('2020-01-01 00:00:00')
+```
+
+## FUNCTION
+### FUNCTION 생성
+```SQL
+DROP PROCEDURE IF EXISTS 데이터베이스명.프로시저명;
+
+DELIMITER $$
+$$
+CREATE FUNCTION 데이터베이스명.함수명(파라미터명1 datatype)
+RETURN datatype
+BEGIN
+  로직
+  RETURN 반환값
+END
+$$
+DELIMITER ;
+```
+> FUNCTION vs PROCEDURE  
+> 계산기능을 만들었는데, 자주 재사용하고 싶을때는 FUNCTION  
+> 긴 쿼리문을 자주 재사용하고 싶을 떄는 PROCEDURE
+> FUNCTION은 RETURN 필수, PROCEDURE는 선택
+> FUNCTION은 CALL없이 호출, PROCEDURE는 CALL로 호출
+> FUNCTION은 자유롭게 사용, PROCEDURE는 쿼리문 중간에 갑자기 사용 불가능
+------------------------------------------------------------------------------------------
+# 테이블 언어설정
+*ALTER TABLE a CONVERT TO CHARACTER SET utf8;*
